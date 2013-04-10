@@ -1,6 +1,7 @@
 package simulator;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 public class Node {
@@ -23,4 +24,25 @@ public class Node {
 			files.add(newFile);
 		}
 	}
+	
+	private File getRandomFile() {
+		Random generator = new Random();
+		return files.get(generator.nextInt(files.size()));
+	}
+	
+	public boolean transferFile(Node neighbor) {
+		File requestedFile = getRandomFile();
+		if (load + requestedFile.size < 100) {
+			load += requestedFile.size;
+			neighbor.load += requestedFile.size;
+			neighbor.files.add(requestedFile);
+			return true;
+		}
+		return false;
+	}
+	
+	public ArrayList<File> getFileList() {
+		return files;
+	}
+	
 }
