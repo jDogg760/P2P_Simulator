@@ -6,14 +6,18 @@ import java.util.UUID;
 
 public class Node {
 	
+	protected UUID nodeId;
 	protected int load;
 	protected ArrayList<Node> neighbors;
 	protected ArrayList<File> files;
+	protected Query currRequest;
 	
-	public Node() {
+	public Node(UUID currId) {
+		nodeId = currId;
 		load = 0;
 		neighbors = new ArrayList<Node>();
 		files = new ArrayList<File>();
+		
 	}
 	
 	public void createFileList(int numFiles) {
@@ -43,6 +47,17 @@ public class Node {
 	
 	public ArrayList<File> getFileList() {
 		return files;
+	}
+	
+	public void setQuery(File currFile){
+		currRequest = new Query(currFile,this);
+	}
+	
+	public Query getQuery(){
+		return currRequest;
+	}
+	public void clearQuery(){
+		currRequest = new Query();
 	}
 	
 }
