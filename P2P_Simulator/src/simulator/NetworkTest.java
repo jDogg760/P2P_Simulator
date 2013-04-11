@@ -22,8 +22,13 @@ public class NetworkTest {
 	@Test
 	public void testNetwork() {
 		network = new Network(20,5);
-		
-//		assertTrue(network.nodeList.size() == 20);
+		for (int i = 0; i < network.nodeList.size(); i++) {
+			Node testNode = network.nodeList.get(i);
+			for (int j = 0; j < testNode.neighbors.size(); j++) {
+				Node testNeighbor = testNode.neighbors.get(j);
+				assertTrue(testNode.nodeId != testNeighbor.nodeId);
+			}
+		}		
 	}
 
 }

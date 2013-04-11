@@ -38,13 +38,13 @@ public class Node {
 
 	public boolean transferFile(Node neighbor, File requestedFile) {
 		//		File requestedFile = getRandomFile();
-		if (load + requestedFile.size < 100) {
-			load += requestedFile.size;
-			neighbor.load += requestedFile.size;
+		//if (load + requestedFile.size < 100) {
+			//load += requestedFile.size;
+		//	neighbor.load += requestedFile.size;
 			neighbor.files.add(requestedFile);
 			return true;
-		}
-		return false;
+		//}
+		//return false;
 	}
 
 	public ArrayList<File> getFileList() {
