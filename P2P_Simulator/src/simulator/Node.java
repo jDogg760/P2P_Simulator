@@ -31,7 +31,7 @@ public class Node {
 		return files;
 	}
 
-	private File getRandomFile() {
+	public File getRandomFile() {
 		Random generator = new Random();
 		return files.get(generator.nextInt(files.size()));
 	}
@@ -53,7 +53,7 @@ public class Node {
 
 	public void setQuery(File currFile){
 		currRequest = new Query(currFile,this);
-		requestFile(currRequest);
+//		requestFile(currRequest);
 	}
 
 

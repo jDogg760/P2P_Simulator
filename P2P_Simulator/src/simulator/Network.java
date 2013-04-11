@@ -13,19 +13,23 @@ public class Network {
 	public Network(int nodes, int numNeighbors) {
 		Node currNode;
 		Node currNeighbor;
+		
+		nodeCount = nodes;
+		neighborCount = numNeighbors;
+		
 		nodeList = new ArrayList<Node>();
 		fileList = new ArrayList<File>();
 		int size;
 
-		initNodeList(nodes);
+		initNodeList(nodeCount);
 
-		for (int i = 0; i < nodes; i++) {
+		for (int i = 0; i < nodeCount; i++) {
 			size = 0;
 			currNode = nodeList.get(i);
 			System.out.println("Node id: "+ currNode.nodeId);
 			fileList.addAll(currNode.createFileList(5));
 			
-			initNeighbors(numNeighbors, currNode, size);
+			initNeighbors( currNode, size);
 		}
 	}
 
@@ -34,9 +38,9 @@ public class Network {
 	 * @param currNode
 	 * @param count
 	 */
-	private void initNeighbors(int neighbors, Node currNode, int count) {
+	private void initNeighbors(Node currNode, int count) {
 		Node currNeighbor;
-		while (count < neighbors) {
+		while (count < neighborCount) {
 			Random generator = new Random();
 			currNeighbor = nodeList.get(generator.nextInt(nodeList.size()));
 			if (!currNode.neighbors.contains(currNeighbor) && currNode != currNeighbor) {
