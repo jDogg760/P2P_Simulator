@@ -26,6 +26,7 @@ public class Node {
 			int fileSize = (int) Math.floor(Math.random() * 1000 + 1);	// Max filesize for transfer = 1GB, min = 1MB
 			File newFile = new File(newID, fileSize);
 			files.add(newFile);
+//			System.out.println("\t"+newFile.id);
 		}
 
 		return files;
@@ -39,10 +40,10 @@ public class Node {
 	public boolean transferFile(Node neighbor, File requestedFile) {
 		//		File requestedFile = getRandomFile();
 		//if (load + requestedFile.size < 100) {
-			//load += requestedFile.size;
+		//load += requestedFile.size;
 		//	neighbor.load += requestedFile.size;
-			neighbor.files.add(requestedFile);
-			return true;
+		neighbor.files.add(requestedFile);
+		return true;
 		//}
 		//return false;
 	}
@@ -53,7 +54,7 @@ public class Node {
 
 	public void setQuery(File currFile){
 		currRequest = new Query(currFile,this);
-//		requestFile(currRequest);
+		//		requestFile(currRequest);
 	}
 
 
@@ -61,13 +62,13 @@ public class Node {
 
 		Node preSender = currQuery.sender;
 		currQuery.update(this);
-		
+
 		for(int i =0; i < neighbors.size(); i++){
 			if (neighbors.get(i) != preSender)
 				neighbors.get(i).receiveRequest(currQuery);
 		}
 
-		
+
 	}
 
 	public void receiveRequest(Query currQuery){
@@ -83,9 +84,9 @@ public class Node {
 	//	public Query getQuery(){
 	//		return currRequest;
 	//	}
-	public void clearQuery(){
-		currRequest = new Query();
-	}
+	//	public void clearQuery(){
+	//		currRequest = new Query();
+	//	}
 
 	public void addNeighbor(Node currNode){
 		neighbors.add(currNode);

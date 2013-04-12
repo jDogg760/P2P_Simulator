@@ -11,26 +11,36 @@ public class Network {
 	public ArrayList<File> fileList;
 
 	public Network(int nodes, int numNeighbors) {
-		Node currNode;
-		Node currNeighbor;
+		
 		
 		nodeCount = nodes;
 		neighborCount = numNeighbors;
 		
 		nodeList = new ArrayList<Node>();
 		fileList = new ArrayList<File>();
-		int size;
+		
+		
+		initNetwork();
+	}
+
+	private void initNetwork() {
+		Node currNode;
+		
 
 		initNodeList(nodeCount);
 
 		for (int i = 0; i < nodeCount; i++) {
-			size = 0;
 			currNode = nodeList.get(i);
-			System.out.println("Node id: "+ currNode.nodeId);
-			fileList.addAll(currNode.createFileList(5));
-			
-			initNeighbors( currNode, size);
+			initFiles(currNode);	
+			initNeighbors( currNode);
 		}
+	}
+
+	private void initFiles(Node currNode) {
+		
+		System.out.println("Node id: "+ currNode.nodeId);
+		fileList.addAll(currNode.createFileList(5));
+		
 	}
 
 	/**
@@ -38,8 +48,10 @@ public class Network {
 	 * @param currNode
 	 * @param count
 	 */
-	private void initNeighbors(Node currNode, int count) {
+	private void initNeighbors(Node currNode) {
 		Node currNeighbor;
+		int count = 0;
+		
 		while (count < neighborCount) {
 			Random generator = new Random();
 			currNeighbor = nodeList.get(generator.nextInt(nodeList.size()));

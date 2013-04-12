@@ -9,9 +9,9 @@ public class Query {
 	public ArrayList<Node> nodesVisited;
 	public long timeStart;
 	public long timeFinish;
-	
-	Query(){};
-	
+
+	//	Query(){};
+
 	Query(File currFile, Node currNode){
 		requestedFile = currFile;
 		requester = currNode;
@@ -19,21 +19,21 @@ public class Query {
 		nodesVisited = new ArrayList<Node>();
 		startTime();
 	}
-	
+
 	public void update(Node currNode){
-		
+
 		sender = currNode;
 		nodesVisited.add(sender);
 	}
-	
+
 	private void startTime() {
 		timeStart = System.currentTimeMillis();
 	}
-	
+
 	private void stopTime() {
 		timeFinish = System.currentTimeMillis();
 	}
-	
+
 	/**
 	 * @return search time in ms
 	 */
@@ -41,5 +41,5 @@ public class Query {
 		stopTime();
 		return timeFinish - timeStart;
 	}
-	
+
 }
