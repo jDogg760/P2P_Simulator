@@ -9,6 +9,7 @@ public class Network {
 	protected int neighborCount;
 	public ArrayList<Node> nodeList;
 	public ArrayList<File> fileList;
+	public ArrayList<Query> queryList;
 	
 	protected static final int requestsPerCycle = 5;
 
@@ -17,6 +18,7 @@ public class Network {
 		neighborCount = numNeighbors;		
 		nodeList = new ArrayList<Node>();
 		fileList = new ArrayList<File>();
+		queryList = new ArrayList<Query>();
 		initNodeList(nodeCount);
 		initFileLists(neighborCount);
 	}
@@ -24,14 +26,21 @@ public class Network {
 	public void simulate(Replicator repScheme, int cycleCount) {
 		for (int i = 0; i < cycleCount; i++) {
 			ArrayList<Node> requestingNodes = getRequestNodes();
-			File requestedFile = getRandomFile();
+			File requestedFile;
+			for(Node currentNode : requestingNodes) {
+				requestedFile = getRandomFile();
+				Query currentQuery = new Query(requestedFile, currentNode);
+				queryList.add(currentQuery);
+				currentNode.requestFile(currentQuery);
+				
+			}
 		}
 	}
 	
 	/**
 	 * @return list of random nodes that will attempt file requests
 	 */
-	private ArrayList<Node> getRequestNodes() {
+	protected ArrayList<Node> getRequestNodes() {
 		ArrayList<Node> requestingNodes = new ArrayList<Node>();
 		for (int i = 0; i < requestsPerCycle; ++i) {
 			requestingNodes.add(getRandomNode());
@@ -43,15 +52,18 @@ public class Network {
 	 * @return random file from Network's fileList member
 	 */
 	private File getRandomFile() {
-		Random generator = new Random();
-		return fileList.get(generator.nextInt(fileList.size()));
+		if (fileList != null && fileList.size() > 0) {
+			Random generator = new Random();
+			return fileList.get(generator.nextInt(fileList.size()));
+		}
+		return null;
 	}
 	
 	/**
 	 * @return random node from Network's nodeList member
 	 */
 	private Node getRandomNode() {
-		if (nodeList != null) {
+		if (nodeList != null && nodeList.size() > 0) {
 			Random generator = new Random();
 			return nodeList.get(generator.nextInt(nodeList.size()));
 		}
@@ -65,7 +77,6 @@ public class Network {
 		Node currNode;
 		for (int i = 0; i < nodeCount; i++) {
 			currNode = nodeList.get(i);
-			System.out.println("Node id: "+ currNode.nodeId);
 			fileList.addAll(currNode.createFileList(numNeighbors));			
 			initNeighbors(currNode);
 		}

@@ -16,10 +16,9 @@ public class NodeTest {
 	
 	@Before
 	public void setUp() throws Exception {
-//		network = new Network(20,5);
 		node1= new Node(UUID.randomUUID());
-		node1.createFileList(5);
 		node2= new Node(UUID.randomUUID());
+		node1.createFileList(5);
 		node2.createFileList(5);
 		node1.neighbors.add(node2);
 		node2.neighbors.add(node1);
@@ -67,12 +66,12 @@ public class NodeTest {
 		assertTrue(node1.files.contains(testRequestFile));
 		
 	}
-//
-//	@Test
-//	public void testReceiveRequest() {
-//		fail("Not yet implemented");
-//	}
-//
+
+	@Test
+	public void testReceiveRequest() {
+		
+	}
+
 //	@Test
 //	public void testClearQuery() {
 //		fail("Not yet implemented");

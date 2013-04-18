@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public class Node {
 
+	private static final int MAX_LOAD = 100;
 	protected UUID nodeId;
 	protected int load;
 	protected ArrayList<Node> neighbors;
@@ -37,15 +38,16 @@ public class Node {
 		return files.get(generator.nextInt(files.size()));
 	}
 
-	public boolean transferFile(Node neighbor, File requestedFile) {
+	public boolean transferFile(Query query) {
 		//		File requestedFile = getRandomFile();
 		//if (load + requestedFile.size < 100) {
 		//load += requestedFile.size;
 		//	neighbor.load += requestedFile.size;
-		neighbor.files.add(requestedFile);
+		if (load < MAX_LOAD && query.nodesVisited.get(query.nodesVisited.size() - 1).load < MAX_LOAD) {
+			query.sender = this;
+			query.sender.files.add(query.requestedFile);
+		}
 		return true;
-		//}
-		//return false;
 	}
 
 	public ArrayList<File> getFileList() {
@@ -54,7 +56,6 @@ public class Node {
 
 	public void setQuery(File currFile){
 		currRequest = new Query(currFile,this);
-		//		requestFile(currRequest);
 	}
 
 
@@ -67,18 +68,18 @@ public class Node {
 			if (neighbors.get(i) != preSender)
 				neighbors.get(i).receiveRequest(currQuery);
 		}
-
-
 	}
 
 	public void receiveRequest(Query currQuery){
-		if (files.contains(currQuery.requestedFile))
-			this.transferFile(currQuery.requester, currQuery.requestedFile);
-		else {
-			requestFile(currQuery);
-
+		if (++currQuery.hopCount <= Query.ttl) {
+			currQuery.nodesVisited.add(this);
+			if (files.contains(currQuery.requestedFile)) {
+				transferFile(currQuery);
+			}
+			else {
+				requestFile(currQuery);
+			}
 		}
-
 	}
 
 	//	public Query getQuery(){

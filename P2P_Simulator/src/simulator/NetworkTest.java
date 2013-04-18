@@ -2,7 +2,8 @@ package simulator;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,17 +13,11 @@ public class NetworkTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		
 		network = new Network(20,5);
 	}
-//
-//	@After
-//	public void tearDown() throws Exception {
-//	}
 
 	@Test
 	public void testNetwork() {
-		
 		for (int i = 0; i < network.nodeList.size(); i++) {
 			Node testNode = network.nodeList.get(i);
 			for (int j = 0; j < testNode.neighbors.size(); j++) {
@@ -31,5 +26,15 @@ public class NetworkTest {
 			}
 		}		
 	}
+	
+	@Test
+	public void testGetRequestNodes() {
+		ArrayList<Node> requestNodes = network.getRequestNodes();
+		for (Node currentNode:requestNodes) {
+			assertTrue(network.nodeList.contains(currentNode));
+		}
+	}
+	
+	
 
 }

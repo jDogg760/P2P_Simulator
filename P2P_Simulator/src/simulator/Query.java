@@ -9,10 +9,13 @@ public class Query {
 	public ArrayList<Node> nodesVisited;
 	public long timeStart;
 	public long timeFinish;
+	public int hopCount;
+	public static final int ttl = 2;
 
 	//	Query(){};
 
 	Query(File currFile, Node currNode){
+		hopCount = 0;
 		requestedFile = currFile;
 		requester = currNode;
 		sender = currNode;
