@@ -9,49 +9,74 @@ public class Network {
 	protected int neighborCount;
 	public ArrayList<Node> nodeList;
 	public ArrayList<File> fileList;
+	
+	protected static final int requestsPerCycle = 5;
 
-	public Network(int nodes, int numNeighbors) {
-		
-		
-		nodeCount = nodes;
-		neighborCount = numNeighbors;
-		
+	public Network(int numNodes, int numNeighbors) {
+		nodeCount = numNodes;
+		neighborCount = numNeighbors;		
 		nodeList = new ArrayList<Node>();
 		fileList = new ArrayList<File>();
-		
-		
-		initNetwork();
-	}
-
-	private void initNetwork() {
-		Node currNode;
-		
-
 		initNodeList(nodeCount);
-
-		for (int i = 0; i < nodeCount; i++) {
-			currNode = nodeList.get(i);
-			initFiles(currNode);	
-			initNeighbors( currNode);
+		initFileLists(neighborCount);
+	}
+	
+	public void simulate(Replicator repScheme, int cycleCount) {
+		for (int i = 0; i < cycleCount; i++) {
+			ArrayList<Node> requestingNodes = getRequestNodes();
+			File requestedFile = getRandomFile();
 		}
 	}
-
-	private void initFiles(Node currNode) {
-		
-		System.out.println("Node id: "+ currNode.nodeId);
-		fileList.addAll(currNode.createFileList(5));
-		
+	
+	/**
+	 * @return list of random nodes that will attempt file requests
+	 */
+	private ArrayList<Node> getRequestNodes() {
+		ArrayList<Node> requestingNodes = new ArrayList<Node>();
+		for (int i = 0; i < requestsPerCycle; ++i) {
+			requestingNodes.add(getRandomNode());
+		}
+		return requestingNodes;
 	}
 
 	/**
-	 * @param neighbors
-	 * @param currNode
-	 * @param count
+	 * @return random file from Network's fileList member
+	 */
+	private File getRandomFile() {
+		Random generator = new Random();
+		return fileList.get(generator.nextInt(fileList.size()));
+	}
+	
+	/**
+	 * @return random node from Network's nodeList member
+	 */
+	private Node getRandomNode() {
+		if (nodeList != null) {
+			Random generator = new Random();
+			return nodeList.get(generator.nextInt(nodeList.size()));
+		}
+		return null;
+	}
+
+	/**
+	 * @param numNeighbors
+	 */
+	private void initFileLists(int numNeighbors) {
+		Node currNode;
+		for (int i = 0; i < nodeCount; i++) {
+			currNode = nodeList.get(i);
+			System.out.println("Node id: "+ currNode.nodeId);
+			fileList.addAll(currNode.createFileList(numNeighbors));			
+			initNeighbors(currNode);
+		}
+	}
+
+	/**
+	 * @param currNode - node to initialize neighbors for
 	 */
 	private void initNeighbors(Node currNode) {
-		Node currNeighbor;
 		int count = 0;
-		
+		Node currNeighbor;
 		while (count < neighborCount) {
 			Random generator = new Random();
 			currNeighbor = nodeList.get(generator.nextInt(nodeList.size()));
@@ -71,6 +96,4 @@ public class Network {
 		}
 	}
 	
-	
-
 }

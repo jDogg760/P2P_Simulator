@@ -23,7 +23,7 @@ public class Node {
 	public ArrayList<File> createFileList(int numFiles) {
 		for (int i = 0; i < numFiles; i++) {
 			UUID newID = UUID.randomUUID();
-			int fileSize = (int) Math.floor(Math.random() * 1000 + 1);	// Max filesize for transfer = 1GB, min = 1MB
+			int fileSize = (int) Math.floor(Math.random() * 1000 + 1);	// Max file size for transfer = 1GB, min = 1MB
 			File newFile = new File(newID, fileSize);
 			files.add(newFile);
 //			System.out.println("\t"+newFile.id);
