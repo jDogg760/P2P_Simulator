@@ -51,7 +51,7 @@ public class Network {
 	/**
 	 * @return random file from Network's fileList member
 	 */
-	private File getRandomFile() {
+	public File getRandomFile() {
 		if (fileList != null && fileList.size() > 0) {
 			Random generator = new Random();
 			return fileList.get(generator.nextInt(fileList.size()));

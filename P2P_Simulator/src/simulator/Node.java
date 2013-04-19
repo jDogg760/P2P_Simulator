@@ -11,6 +11,7 @@ public class Node {
 	protected int load;
 	protected ArrayList<Node> neighbors;
 	protected ArrayList<File> files;
+	protected ArrayList<Transfer> transfers;
 	public Query currRequest;
 
 	public Node(UUID currId) {
@@ -18,16 +19,17 @@ public class Node {
 		load = 0;
 		neighbors = new ArrayList<Node>();
 		files = new ArrayList<File>();
+		transfers = new ArrayList<Transfer>();
 
 	}
 
 	public ArrayList<File> createFileList(int numFiles) {
 		for (int i = 0; i < numFiles; i++) {
 			UUID newID = UUID.randomUUID();
-			int fileSize = (int) Math.floor(Math.random() * 1000 + 1);	// Max file size for transfer = 1GB, min = 1MB
+			int fileSize = (int) Math.floor(Math.random() * 100 + 1);	// Max file size for transfer = 1GB, min = 1MB
 			File newFile = new File(newID, fileSize);
 			files.add(newFile);
-//			System.out.println("\t"+newFile.id);
+			//			System.out.println("\t"+newFile.id);
 		}
 
 		return files;
@@ -38,15 +40,17 @@ public class Node {
 		return files.get(generator.nextInt(files.size()));
 	}
 
-	public boolean transferFile(Query query) {
+	public boolean transferFile(Node targetNode, File targetFile) {
 		//		File requestedFile = getRandomFile();
 		//if (load + requestedFile.size < 100) {
 		//load += requestedFile.size;
 		//	neighbor.load += requestedFile.size;
-		if (load < MAX_LOAD && query.nodesVisited.get(query.nodesVisited.size() - 1).load < MAX_LOAD) {
-			query.sender = this;
-			query.sender.files.add(query.requestedFile);
-		}
+		//		if (load < MAX_LOAD && query.nodesVisited.get(query.nodesVisited.size() - 1).load < MAX_LOAD) {
+		//			query.sender = this;
+		//			query.sender.files.add(query.requestedFile);
+		//		}
+		
+		targetNode.files.add(targetFile);
 		return true;
 	}
 
@@ -74,7 +78,10 @@ public class Node {
 		if (++currQuery.hopCount <= Query.ttl) {
 			currQuery.nodesVisited.add(this);
 			if (files.contains(currQuery.requestedFile)) {
-				transferFile(currQuery);
+				//transferFile(currQuery.requester, currQuery.requestedFile);
+				Transfer newTransfer = new Transfer(currQuery, 30);
+				transfers.add(newTransfer);
+				
 			}
 			else {
 				requestFile(currQuery);
@@ -82,6 +89,13 @@ public class Node {
 		}
 	}
 
+	public void processTransfers(){
+		for (Transfer tran:transfers){
+			tran.cycleTransfer();
+		}
+	}
+	
+	
 	//	public Query getQuery(){
 	//		return currRequest;
 	//	}
