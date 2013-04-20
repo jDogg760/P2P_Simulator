@@ -86,14 +86,16 @@ public class Network {
 	 * @param currNode - node to initialize neighbors for
 	 */
 	private void initNeighbors(Node currNode) {
-		int count = 0;
 		Node currNeighbor;
-		while (count < neighborCount) {
+		while (currNode.neighbors.size() < neighborCount - 2) {
 			Random generator = new Random();
 			currNeighbor = nodeList.get(generator.nextInt(nodeList.size()));
-			if (!currNode.neighbors.contains(currNeighbor) && currNode != currNeighbor) {
+//			System.out.println(currNeighbor.neighbors.size());
+			if (!currNode.neighbors.contains(currNeighbor) && 
+					currNode != currNeighbor && 
+					currNeighbor.neighbors.size() <= neighborCount) {
 				currNode.addNeighbor(currNeighbor);
-				count++;
+				currNeighbor.addNeighbor(currNode);
 			}
 		}
 	}

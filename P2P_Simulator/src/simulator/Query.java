@@ -10,8 +10,8 @@ public class Query {
 	public long timeStart;
 	public long timeFinish;
 	public int hopCount;
-	public static final int ttl = 2;
-
+	public static final int ttl = 7;
+	public boolean inProgress;
 	//	Query(){};
 
 	Query(File currFile, Node currNode){
@@ -20,6 +20,7 @@ public class Query {
 		requester = currNode;
 		sender = currNode;
 		nodesVisited = new ArrayList<Node>();
+		inProgress = false;
 		startTime();
 	}
 

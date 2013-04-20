@@ -10,15 +10,17 @@ public class P2PNetwork {
 		ArrayList<Node> requestingNodes = new ArrayList<Node>();
 		
 		for (int i = 0; i < jobAmt; i++){
+			System.out.println("Job Number: " + (i+1));
 			requestingNodes = testNetwork.getRequestNodes();
 			
 			for (Node currNode: requestingNodes){
 				Query currQuery = new Query(testNetwork.getRandomFile(),currNode);
-				
-				currNode.requestFile(currQuery);
+				if (!currNode.files.contains(currQuery.requestedFile)) {
+					currNode.requestFile(currQuery);
+				}
 			}
 			
-			for (Node currNode : testNetwork.nodeList){
+			for (Node currNode : testNetwork.nodeList) {
 				currNode.processTransfers();
 			}
 			

@@ -11,7 +11,8 @@ public class Node {
 	protected int load;
 	protected ArrayList<Node> neighbors;
 	protected ArrayList<File> files;
-	protected ArrayList<Transfer> transfers;
+	protected ArrayList<Transfer> sendTransfers;
+	protected ArrayList<Transfer> receiveTransfers;
 	public Query currRequest;
 
 	public Node(UUID currId) {
@@ -19,7 +20,8 @@ public class Node {
 		load = 0;
 		neighbors = new ArrayList<Node>();
 		files = new ArrayList<File>();
-		transfers = new ArrayList<Transfer>();
+		sendTransfers = new ArrayList<Transfer>();
+		receiveTransfers = new ArrayList<Transfer>();
 
 	}
 
@@ -49,7 +51,7 @@ public class Node {
 		//			query.sender = this;
 		//			query.sender.files.add(query.requestedFile);
 		//		}
-		
+
 		targetNode.files.add(targetFile);
 		return true;
 	}
@@ -67,6 +69,7 @@ public class Node {
 
 		Node preSender = currQuery.sender;
 		currQuery.update(this);
+		currQuery.hopCount++;
 
 		for(int i =0; i < neighbors.size(); i++){
 			if (neighbors.get(i) != preSender)
@@ -75,27 +78,49 @@ public class Node {
 	}
 
 	public void receiveRequest(Query currQuery){
-		if (++currQuery.hopCount <= Query.ttl) {
+		if (currQuery.hopCount <= Query.ttl) {
 			currQuery.nodesVisited.add(this);
-			if (files.contains(currQuery.requestedFile)) {
-				//transferFile(currQuery.requester, currQuery.requestedFile);
-				Transfer newTransfer = new Transfer(currQuery, 30);
-				transfers.add(newTransfer);
-				
-			}
-			else {
-				requestFile(currQuery);
+			if (!currQuery.inProgress){
+				if (files.contains(currQuery.requestedFile) && transferCheck(currQuery)) {
+					//transferFile(currQuery.requester, currQuery.requestedFile);
+					Transfer newTransfer = new Transfer(currQuery, 30);
+					sendTransfers.add(newTransfer);
+					currQuery.requester.receiveTransfers.add(newTransfer);	
+					currQuery.inProgress = true;
+				}
+				else {
+					requestFile(currQuery);
+				}
 			}
 		}
 	}
 
+	public boolean transferCheck (Query myQuery) {
+		UUID fileID = myQuery.requestedFile.id;
+		Node requestor = myQuery.requester;
+		//Node sender = myQuery.sender;
+
+		for (Transfer tran : sendTransfers) {
+			if (tran.transferedFile.id.equals(fileID) && 
+					tran.receiver.equals(requestor)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public void processTransfers(){
-		for (Transfer tran:transfers){
-			tran.cycleTransfer();
+		for (int j = 0; j < sendTransfers.size(); j++){
+			Transfer currTransfer = sendTransfers.get(j);
+			if (currTransfer.cycleTransfer()) {
+				System.out.println("removing: " + currTransfer.transferedFile.id);
+				sendTransfers.remove(currTransfer);
+				currTransfer.receiver.receiveTransfers.remove(currTransfer);				
+			}
 		}
 	}
-	
-	
+
+
 	//	public Query getQuery(){
 	//		return currRequest;
 	//	}

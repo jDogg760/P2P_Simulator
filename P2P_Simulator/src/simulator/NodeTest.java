@@ -57,19 +57,35 @@ public class NodeTest {
 //		fail("Not yet implemented");
 //	}
 //
-	@Test
-	public void testRequestFile() {
-		File testRequestFile = node2.getRandomFile();
-		node1.setQuery(testRequestFile);
-		assertFalse(node1.files.contains(testRequestFile));
-		node1.requestFile(node1.currRequest);
-		assertTrue(node1.files.contains(testRequestFile));
-		
-	}
+//	@Test
+//	public void testRequestFile() {
+//		File testRequestFile = node2.getRandomFile();
+//		node1.setQuery(testRequestFile);
+//		assertFalse(node1.files.contains(testRequestFile));
+//		node1.requestFile(node1.currRequest);
+//		assertTrue(node1.files.contains(testRequestFile));
+//		
+//	}
 
 	@Test
 	public void testReceiveRequest() {
-		
+		File file2 = node2.getRandomFile();
+		Query query = new Query(file2,node1);
+		node2.receiveRequest(query);
+		assertTrue(query.inProgress);
+		assertTrue(node1.receiveTransfers.get(0).transferedFile.equals(file2));
+		assertTrue(node2.sendTransfers.get(0).transferedFile.equals(file2));
+		assertTrue(query.nodesVisited.contains(node2));
+	}
+	
+	@Test
+	public void testTransferCheck() {
+		File file2 = node2.getRandomFile();
+		Query query = new Query(file2,node1);
+		//node2.receiveRequest(query);
+		assertTrue(node2.transferCheck(query));
+		node1.requestFile(query);
+		assertFalse(node2.transferCheck(query));
 	}
 
 //	@Test
