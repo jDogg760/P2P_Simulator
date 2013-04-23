@@ -109,15 +109,18 @@ public class Node {
 		return true;
 	}
 
-	public void processTransfers(){
+	public ArrayList<Transfer> processTransfers(){
+		ArrayList<Transfer> completed = new ArrayList<Transfer>();
 		for (int j = 0; j < sendTransfers.size(); j++){
 			Transfer currTransfer = sendTransfers.get(j);
 			if (currTransfer.cycleTransfer()) {
 				System.out.println("removing: " + currTransfer.transferedFile.id);
 				sendTransfers.remove(currTransfer);
+				completed.add(currTransfer);
 				currTransfer.receiver.receiveTransfers.remove(currTransfer);				
 			}
 		}
+		return completed;
 	}
 
 

@@ -5,12 +5,12 @@ import java.util.ArrayList;
 public class P2PNetwork {
 	public static void main(String args[]){
 		Network testNetwork = new Network(20,5);
-		int jobAmt = 30;
+		int cycleCount = 100;
 	
 		ArrayList<Node> requestingNodes = new ArrayList<Node>();
 		
-		for (int i = 0; i < jobAmt; i++){
-			System.out.println("Job Number: " + (i+1));
+		for (int i = 0; i < cycleCount; i++){
+			System.out.println("Cycle: " + (i+1));
 			requestingNodes = testNetwork.getRequestNodes();
 			
 			for (Node currNode: requestingNodes){
@@ -22,13 +22,8 @@ public class P2PNetwork {
 			
 			for (Node currNode : testNetwork.nodeList) {
 				currNode.processTransfers();
-			}
-			
-			
+			}			
 		}
-		
-		
-
 	}
 }
 

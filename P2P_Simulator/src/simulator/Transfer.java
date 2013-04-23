@@ -20,7 +20,7 @@ public class Transfer {
 		transferedFile = currQuery.requestedFile;
 		remaining = transferedFile.size;		
 		maxAmt = allowedTransfer;
-		transferTime = 0;
+		transferTime = 1;
 	}
 	
 	public boolean cycleTransfer(){
