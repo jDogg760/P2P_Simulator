@@ -1,28 +1,34 @@
 package simulator;
 
 import java.util.ArrayList;
+import java.util.Queue;
 import java.util.Random;
 import java.util.UUID;
 
 public class Node {
 
 	private static final int MAX_LOAD = 100;
+	public static final int MAX_TRANSFER = 30;
 	protected UUID nodeId;
 	protected int load;
 	protected ArrayList<Node> neighbors;
 	protected ArrayList<File> files;
 	protected ArrayList<Transfer> sendTransfers;
 	protected ArrayList<Transfer> receiveTransfers;
+	protected ArrayList<Transfer> completed;
+	protected Queue<Transfer> transferQueue;
 	public Query currRequest;
+	public int maxTransferBandwidth;
 
 	public Node(UUID currId) {
-		nodeId = currId;
-		load = 0;
-		neighbors = new ArrayList<Node>();
-		files = new ArrayList<File>();
-		sendTransfers = new ArrayList<Transfer>();
-		receiveTransfers = new ArrayList<Transfer>();
-
+		nodeId 				= currId;
+		load 				= 0;
+		neighbors 			= new ArrayList<Node>();
+		files 				= new ArrayList<File>();
+		sendTransfers 		= new ArrayList<Transfer>();
+		receiveTransfers 	= new ArrayList<Transfer>();
+		completed 			= new ArrayList<Transfer>();
+		maxTransferBandwidth = 100;
 	}
 
 	public ArrayList<File> createFileList(int numFiles) {
@@ -66,14 +72,15 @@ public class Node {
 
 
 	public void requestFile(Query currQuery){
+		if (loadCheck()) {
+			Node preSender = currQuery.sender;
+			currQuery.update(this);
+			currQuery.hopCount++;
 
-		Node preSender = currQuery.sender;
-		currQuery.update(this);
-		currQuery.hopCount++;
-
-		for(int i =0; i < neighbors.size(); i++){
-			if (neighbors.get(i) != preSender)
-				neighbors.get(i).receiveRequest(currQuery);
+			for(int i =0; i < neighbors.size(); i++){
+				if (neighbors.get(i) != preSender)
+					neighbors.get(i).receiveRequest(currQuery);
+			}
 		}
 	}
 
@@ -81,12 +88,11 @@ public class Node {
 		if (currQuery.hopCount <= Query.ttl) {
 			currQuery.nodesVisited.add(this);
 			if (!currQuery.inProgress){
-				if (files.contains(currQuery.requestedFile) && transferCheck(currQuery)) {
+				if (files.contains(currQuery.requestedFile) && !transferInProgress(currQuery)) {
 					//transferFile(currQuery.requester, currQuery.requestedFile);
-					Transfer newTransfer = new Transfer(currQuery, 30);
-					sendTransfers.add(newTransfer);
-					currQuery.requester.receiveTransfers.add(newTransfer);	
-					currQuery.inProgress = true;
+
+					//					initTransfer(currQuery);
+					initTransferPath(currQuery);
 				}
 				else {
 					requestFile(currQuery);
@@ -95,7 +101,48 @@ public class Node {
 		}
 	}
 
-	public boolean transferCheck (Query myQuery) {
+	private boolean loadCheck() {
+		return this.load + MAX_TRANSFER < MAX_LOAD;
+	}
+
+	/**
+	 * @param currQuery
+	 */
+	//	private void initTransfer(Query currQuery) {
+	//		Transfer newTransfer = new Transfer(currQuery, 30);
+	//		transferQueue.add(newTransfer);
+	//
+	//		if (loadCheck()) {
+	//			newTransfer = transferQueue.remove();
+	//			sendTransfers.add(newTransfer);
+	//			newTransfer.query.requester.receiveTransfers.add(newTransfer);	
+	//			newTransfer.query.inProgress = true;
+	//			load += MAX_TRANSFER;
+	//			currQuery.requester.load += MAX_TRANSFER;
+	//		}
+	//
+	//	}
+
+	private void initTransferPath(Query currQuery){
+		for (int i = currQuery.nodesVisited.size()-1; i > -1;i--){
+			Transfer newTransfer = new Transfer(currQuery);
+			if (i  > 0){
+				newTransfer.sender = currQuery.nodesVisited.get(i);
+				newTransfer.receiver = currQuery.nodesVisited.get(i-1);
+			}
+
+			//			currQuery.nodesVisited.get(i).transferQueue.add(newTransfer);
+			newTransfer.sender.sendTransfers.add(newTransfer);
+			newTransfer.receiver.receiveTransfers.add(newTransfer);
+		}
+	}
+
+
+	/**
+	 * @param myQuery
+	 * @return true if transfer of a given file is already in progress on a node
+	 */
+	public boolean transferInProgress (Query myQuery) {
 		UUID fileID = myQuery.requestedFile.id;
 		Node requestor = myQuery.requester;
 		//Node sender = myQuery.sender;
@@ -103,21 +150,27 @@ public class Node {
 		for (Transfer tran : sendTransfers) {
 			if (tran.transferedFile.id.equals(fileID) && 
 					tran.receiver.equals(requestor)) {
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
+
 	public ArrayList<Transfer> processTransfers(){
-		ArrayList<Transfer> completed = new ArrayList<Transfer>();
 		for (int j = 0; j < sendTransfers.size(); j++){
 			Transfer currTransfer = sendTransfers.get(j);
-			if (currTransfer.cycleTransfer()) {
-				System.out.println("removing: " + currTransfer.transferedFile.id);
+			maxTransferBandwidth = MAX_LOAD / (sendTransfers.size() + receiveTransfers.size()); //TODO: change to float
+			int maxReceiveBandwidth = MAX_LOAD / (currTransfer.receiver.sendTransfers.size() + currTransfer.receiver.receiveTransfers.size());
+
+			int bandwidth = Math.min(maxReceiveBandwidth, maxTransferBandwidth);
+			if (currTransfer.cycleTransfer(bandwidth)) {
+				//System.out.println("removing: " + currTransfer.transferedFile.id);
 				sendTransfers.remove(currTransfer);
 				completed.add(currTransfer);
-				currTransfer.receiver.receiveTransfers.remove(currTransfer);				
+				currTransfer.receiver.receiveTransfers.remove(currTransfer);
+				load = load - MAX_TRANSFER;
+				currTransfer.receiver.load = load - MAX_TRANSFER;
 			}
 		}
 		return completed;

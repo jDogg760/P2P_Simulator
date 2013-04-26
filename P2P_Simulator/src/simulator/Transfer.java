@@ -8,10 +8,10 @@ public class Transfer {
 	Query query;
 	public File transferedFile;
 	public int remaining;
-	public int maxAmt;
+//	public int maxAmt;
 	public int transferTime;
 	
-	public Transfer(Query currQuery, int allowedTransfer) {
+	public Transfer(Query currQuery) {
 //		fileName = targetFile.id;
 //		fileSize = targetFile.size;
 		query = currQuery;
@@ -19,12 +19,12 @@ public class Transfer {
 		receiver = currQuery.requester;
 		transferedFile = currQuery.requestedFile;
 		remaining = transferedFile.size;		
-		maxAmt = allowedTransfer;
+//		maxAmt = allowedTransfer;
 		transferTime = 1;
 	}
 	
-	public boolean cycleTransfer(){
-		if (remaining <= maxAmt) {
+	public boolean cycleTransfer(int transferBandwidth){
+		if (remaining <= transferBandwidth) {
 			remaining = 0;
 			sender.transferFile(receiver, transferedFile);
 			System.out.println("Query: " + query.requestedFile.id + 
@@ -35,7 +35,7 @@ public class Transfer {
 		}
 		else {
 			transferTime++;
-			remaining = remaining - maxAmt;
+			remaining = remaining - transferBandwidth;
 			return false;
 		}
 	}

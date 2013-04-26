@@ -83,9 +83,9 @@ public class NodeTest {
 		File file2 = node2.getRandomFile();
 		Query query = new Query(file2,node1);
 		//node2.receiveRequest(query);
-		assertTrue(node2.transferCheck(query));
+		assertTrue(node2.transferInProgress(query));
 		node1.requestFile(query);
-		assertFalse(node2.transferCheck(query));
+		assertFalse(node2.transferInProgress(query));
 	}
 
 //	@Test
