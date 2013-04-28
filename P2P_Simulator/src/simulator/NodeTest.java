@@ -67,26 +67,26 @@ public class NodeTest {
 //		
 //	}
 
-	@Test
-	public void testReceiveRequest() {
-		File file2 = node2.getRandomFile();
-		Query query = new Query(file2,node1);
-		node2.receiveRequest(query);
-		assertTrue(query.inProgress);
-		assertTrue(node1.receivedFiles.get(0).transferedFile.equals(file2));
-		assertTrue(node2.sendTransfers.get(0).transferedFile.equals(file2));
-		assertTrue(query.nodesVisited.contains(node2));
-	}
+//	@Test
+//	public void testReceiveRequest() {
+//		File file2 = node2.getRandomFile();
+//		Query query = new Query(file2,node1);
+//		node2.receiveRequest(query);
+//		assertTrue(query.inProgress);
+//		assertTrue(node1.receivedFiles.get(0).transferedFile.equals(file2));
+//		assertTrue(node2.sendTransfers.get(0).transferedFile.equals(file2));
+//		assertTrue(query.nodesVisited.contains(node2));
+//	}
 	
-	@Test
-	public void testTransferCheck() {
-		File file2 = node2.getRandomFile();
-		Query query = new Query(file2,node1);
-		//node2.receiveRequest(query);
-		assertTrue(node2.transferInProgress(query));
-		node1.requestFile(query);
-		assertFalse(node2.transferInProgress(query));
-	}
+//	@Test
+//	public void testTransferCheck() {
+//		File file2 = node2.getRandomFile();
+//		Query query = new Query(file2,node1);
+//		//node2.receiveRequest(query);
+//		assertTrue(node2.transferInProgress(query));
+//		node1.requestFile(query);
+//		assertFalse(node2.transferInProgress(query));
+//	}
 
 //	@Test
 //	public void testClearQuery() {

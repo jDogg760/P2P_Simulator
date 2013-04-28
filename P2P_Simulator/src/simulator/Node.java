@@ -84,29 +84,29 @@ public class Node {
 	}
 
 
-	public void requestFile(Query currQuery){
-		//		if (loadCheck()) {
-		Node preSender = currQuery.sender;
-		currQuery.update(this);
-		//		currQuery.hopCount++;
+	public boolean requestFile(Query currQuery){
+		currQuery.setSender(this);
 		LinkedList<Node> searchList = new LinkedList<Node>();
-
 		Node currNode;
+		Query searchQuery;
 
 		for(int i =0; i < neighbors.size(); i++){
-
 			searchList.add(neighbors.get(i));
-
-			//			if (neighbors.get(i) != preSender)
-			//				neighbors.get(i).receiveRequest(currQuery);
 		}
-
-		currNode = searchList.removeFirst();		
-		while (!currNode.receiveRequest(currQuery)) {
-			searchList.addAll(currNode.neighbors);
-			currNode = searchList.removeFirst();
+		
+		while (!searchList.isEmpty()) {
+			searchQuery = new Query (currQuery); // Copy the query
+			currNode = searchList.remove();	// Get the neighbor
+			if (currNode.receiveRequest(searchQuery)) {
+				return true;
+			}
 		}
-
+		for (Node neighbor : neighbors) {
+			searchQuery = new Query (currQuery);
+			searchQuery.nodesVisited.add(neighbor);
+			return neighbor.requestFile(searchQuery);
+		}
+		return false;
 	}
 
 	public boolean receiveRequest(Query currQuery){

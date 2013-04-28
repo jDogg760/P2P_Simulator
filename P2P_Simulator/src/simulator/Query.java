@@ -14,7 +14,7 @@ public class Query {
 	public boolean inProgress;
 	//	Query(){};
 
-	Query(File currFile, Node currNode){
+	public Query(File currFile, Node currNode){
 		hopCount = 0;
 		requestedFile = currFile;
 		requester = currNode;
@@ -23,9 +23,22 @@ public class Query {
 		inProgress = false;
 		startTime();
 	}
+	
+	public Query(Query q) {
+		this.hopCount = q.hopCount;
+		this.requestedFile = q.requestedFile;
+		this.requester = q.requester;
+		this.sender = q.sender;
+		this.nodesVisited = new ArrayList<Node>();
+		for (Node n : q.nodesVisited) {
+			this.nodesVisited.add(n);
+		}
+		this.inProgress = q.inProgress;
+		this.timeStart = q.timeStart;
+		this.timeFinish = q.timeFinish;
+	}
 
-	public void update(Node currNode){
-
+	public void setSender(Node currNode){
 		sender = currNode;
 		nodesVisited.add(sender);
 	}

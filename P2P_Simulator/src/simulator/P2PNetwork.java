@@ -57,8 +57,6 @@ public class P2PNetwork {
 				networkLoad += aFile.size;
 				filesTransferred++;
 			}	
-			
-			
 		}
 		
 		System.out.println("Total Transfers Completed: " + filesTransferred);
