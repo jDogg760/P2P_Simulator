@@ -73,7 +73,7 @@ public class NodeTest {
 		Query query = new Query(file2,node1);
 		node2.receiveRequest(query);
 		assertTrue(query.inProgress);
-		assertTrue(node1.receiveTransfers.get(0).transferedFile.equals(file2));
+		assertTrue(node1.receivedFiles.get(0).transferedFile.equals(file2));
 		assertTrue(node2.sendTransfers.get(0).transferedFile.equals(file2));
 		assertTrue(query.nodesVisited.contains(node2));
 	}

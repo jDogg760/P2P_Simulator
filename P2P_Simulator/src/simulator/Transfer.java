@@ -7,9 +7,9 @@ public class Transfer {
 	Node receiver;
 	Query query;
 	public File transferedFile;
-	public int remaining;
+//	public int remaining;
 //	public int maxAmt;
-	public int transferTime;
+//	public int transferTime;
 	
 	public Transfer(Query currQuery) {
 //		fileName = targetFile.id;
@@ -18,25 +18,24 @@ public class Transfer {
 		sender = currQuery.nodesVisited.get(currQuery.nodesVisited.size()-1);
 		receiver = currQuery.requester;
 		transferedFile = currQuery.requestedFile;
-		remaining = transferedFile.size;		
+//		remaining = transferedFile.size;		
 //		maxAmt = allowedTransfer;
-		transferTime = 1;
+//		transferTime = 1;
 	}
 	
-	public boolean cycleTransfer(int transferBandwidth){
-		if (remaining <= transferBandwidth) {
-			remaining = 0;
+	public boolean cycleTransfer(){
+//		if (remaining <= transferBandwidth) {
+//			remaining = 0;
 			sender.transferFile(receiver, transferedFile);
 			System.out.println("Query: " + query.requestedFile.id + 
-					"\t Hop count: " + query.hopCount + "\t Transfer Time: " +
-					transferTime + "\t File size: " + query.requestedFile.size +
+					"\t Hop count: " + query.hopCount  + "\t File size: " + query.requestedFile.size +
 					"\tRequestor: " + query.requester.nodeId + "\tSender: " + query.sender.nodeId);
 			return true;
 		}
-		else {
-			transferTime++;
-			remaining = remaining - transferBandwidth;
-			return false;
-		}
-	}
+//		else {
+//			transferTime++;
+//			remaining = remaining - transferBandwidth;
+//			return false;
+//		}
+	
 }
