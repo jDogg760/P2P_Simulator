@@ -13,6 +13,7 @@ public class NodeTest {
 //	Network network;
 	Node node1;
 	Node node2;
+	File f1, f2;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -22,6 +23,8 @@ public class NodeTest {
 		node2.createFileList(5);
 		node1.neighbors.add(node2);
 		node2.neighbors.add(node1);
+		f1 = new File(UUID.randomUUID(), 100);
+		f2 = new File(UUID.randomUUID(), 100);
 	}
 
 	@After
@@ -97,5 +100,13 @@ public class NodeTest {
 //	public void testAddNeighbor() {
 //		fail("Not yet implemented");
 //	}
+	
+	@Test
+	public void testRequestFile() {
+		f1.requests++;
+		File f3 = new File(f1);
+		node1.replicas.add(f3);
+		assertTrue(node1.replicas.element().requests == 0);
+	}
 
 }

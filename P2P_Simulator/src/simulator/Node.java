@@ -46,7 +46,6 @@ public class Node {
 			files.add(newFile);
 			//			System.out.println("\t"+newFile.id);
 		}
-
 		return files;
 	}
 
@@ -64,16 +63,19 @@ public class Node {
 		//			query.sender = this;
 		//			query.sender.files.add(query.requestedFile);
 		//		}
+		
+		File requestedCopy = new File(targetFile);		// Make new copy of target and set requests = 0
+		targetFile.requests++;							// Increment requests on sender
 
 		if (isRequestor) {
-			targetNode.files.add(targetFile);
+			targetNode.files.add(requestedCopy);
 		}
 		else {
 			if (targetNode.replicas.size() >= MAX_REPLICAS)
 				targetNode.replicas.remove();
-			targetNode.replicas.add(targetFile);
+			targetNode.replicas.add(requestedCopy);
 		}
-		targetNode.receivedFiles.add(targetFile);
+		targetNode.receivedFiles.add(requestedCopy);
 		this.sentFiles.add(targetFile);
 		return true;
 	}
@@ -110,13 +112,16 @@ public class Node {
 		//			return neighbor.requestFile(searchQuery);
 		//		}
 		//		return false;
-		if (files.contains(currQuery.requestedFile)){
+		File queryFile = getFile(currQuery);
+		File queryReplica = getReplica(currQuery);
+		if (queryFile != null){
 //			completedQueries.add(currQuery);
 			return;
 		}
-		else if (replicas.contains(currQuery.requestedFile)) {
-			files.add(currQuery.requestedFile);
-			replicas.remove(currQuery.requestedFile);
+		else if (queryReplica != null) {
+			files.add(queryReplica);
+			replicas.remove(queryReplica);
+			queryReplica.requests++;
 			completedQueries.add(currQuery);
 		}
 		else {
@@ -154,17 +159,37 @@ public class Node {
 		}
 
 	}
+	
+	public File getReplica(Query aQuery) {
+		for (File replica : replicas) {
+			if (replica.id == aQuery.requestedFile.id) {
+				return replica;
+			}
+		}
+		return null;
+	}
+	
+	public File getFile(Query aQuery) {
+		for (File file : files) {
+			if (file.id == aQuery.requestedFile.id) {
+				return file;
+			}
+		}
+		return null;
+	}
 
 	public boolean receiveRequest(Query currQuery){
 		//		currQuery.hopCount++;
 		//		if (currQuery.hopCount <= Query.ttl) {
 		//			currQuery.nodesVisited.add(this);
 		//			if (!currQuery.inProgress){
-		if (files.contains(currQuery.requestedFile) || replicas.contains(currQuery.requestedFile) ) {
-			if (replicas.contains(currQuery.requestedFile)){
+		File queryFile = getFile(currQuery);
+		File queryReplica = getReplica(currQuery);
+		if (queryFile != null || queryReplica != null ) {
+			if (queryReplica != null){
 //				files.add(currQuery.requestedFile);
-				replicas.remove(currQuery.requestedFile);
-				replicas.add(currQuery.requestedFile); //moving to top of list
+				replicas.remove(queryReplica);
+				replicas.add(queryReplica); //moving to top of list
 			}
 			currQuery.hopCount = currQuery.nodesVisited.size();
 			currQuery.requester.completedQueries.add(currQuery);
@@ -182,9 +207,8 @@ public class Node {
 		//					initTransferPath(currQuery);
 		//					currQuery.requester.completedQueries.add(currQuery);
 		//					return true;
-		//				}
-		else 
-			return false;
+		//				} 
+		return false;
 		//				else {
 		//					Query forwardQuery = new Query(currQuery.requestedFile, currQuery.requester);
 		//					forwardQuery = currQuery;
@@ -243,8 +267,10 @@ public class Node {
 			else
 				currQuery.nodesVisited.get(i).transferFile(currQuery.requester, currQuery.requestedFile, true);
 		}
-
-
+	}
+	
+	private void initTransferRandom(Query q) {
+		
 	}
 
 

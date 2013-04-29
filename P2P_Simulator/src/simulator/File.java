@@ -16,6 +16,12 @@ public class File {
 		requests = 0;
 	}
 	
+	public File(File f) {
+		id = f.id;
+		size = f.size;
+		requests = 0;
+	}
+	
 	public void clearRequests() {
 		requests = 0;
 	}
