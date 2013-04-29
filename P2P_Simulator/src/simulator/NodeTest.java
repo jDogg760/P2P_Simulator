@@ -101,12 +101,12 @@ public class NodeTest {
 //		fail("Not yet implemented");
 //	}
 	
-	@Test
-	public void testRequestFile() {
-		f1.requests++;
-		File f3 = new File(f1);
-		node1.replicas.add(f3);
-		assertTrue(node1.replicas.element().requests == 0);
-	}
+//	@Test
+//	public void testRequestFile() {
+//		f1.requests++;
+//		File f3 = new File(f1);
+//		node1.replicas.add(f3);
+//		assertTrue(node1.replicas.element().requests == 0);
+//	}
 
 }

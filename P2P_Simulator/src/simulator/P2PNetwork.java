@@ -14,7 +14,7 @@ public class P2PNetwork {
 	
 		ArrayList<Node> requestingNodes = new ArrayList<Node>();
 		
-		for (int i = 0; i < cycleCount; i++){
+		for (int i = 1; i < cycleCount+1; i++){
 //			System.out.println("Cycle: " + (i+1));
 			requestingNodes = testNetwork.getRequestNodes();
 			
@@ -22,7 +22,7 @@ public class P2PNetwork {
 				Query currQuery = new Query(testNetwork.getRandomFile(),currNode);
 			
 					
-					currNode.requestFile(currQuery);
+					currNode.requestFile(currQuery, i);
 //					completedQueries.add(currQuery);
 				
 			}

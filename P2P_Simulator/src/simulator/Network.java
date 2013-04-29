@@ -31,7 +31,7 @@ public class Network {
 				requestedFile = getRandomFile();
 				Query currentQuery = new Query(requestedFile, currentNode);
 				queryList.add(currentQuery);
-				currentNode.requestFile(currentQuery);
+				currentNode.requestFile(currentQuery, cycleCount);
 				
 			}
 		}
