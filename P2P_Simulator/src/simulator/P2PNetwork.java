@@ -22,7 +22,7 @@ public class P2PNetwork {
 				Query currQuery = new Query(testNetwork.getRandomFile(),currNode);
 			
 					
-					currNode.requestFile(currQuery, i);
+					currNode.requestFile(currQuery);
 //					completedQueries.add(currQuery);
 				
 			}
@@ -64,7 +64,7 @@ public class P2PNetwork {
 		
 		for (int i = 0; i < completedQueries.size(); i++) {
 			Query aQuery = completedQueries.get(i);
-			System.out.println("\tQuery: " + aQuery.requester.nodeId + " Hop count: " + aQuery.hopCount + " " + aQuery.requestedFile.id);
+//			System.out.println("\tQuery: " + aQuery.requester.nodeId + " Hop count: " + aQuery.hopCount + " " + aQuery.requestedFile.id);
 			
 			if (i < completedQueries.size()-2)
 				if (completedQueries.get(i).requester.nodeId != completedQueries.get(i+1).requester.nodeId  )
