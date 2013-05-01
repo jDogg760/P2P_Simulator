@@ -1,5 +1,10 @@
 package simulator;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,9 +49,24 @@ public class Node {
 	
 
 	public ArrayList<File> createFileList(int numFiles) {
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(new FileReader("file_list.txt"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
 		for (int i = 0; i < numFiles; i++) {
 			UUID newID = UUID.randomUUID();
-			int fileSize = (int) Math.floor(Math.random() * 100 + 1);	// Max file size for transfer = 1GB, min = 1MB
+			int fileSize = 0;
+			try {
+				fileSize = Integer.parseInt(in.readLine());
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			File newFile = new File(newID, fileSize);
 			files.add(newFile);
 			//			System.out.println("\t"+newFile.id);
@@ -91,7 +111,7 @@ public class Node {
 		}
 		else {
 			//			cycleLoad += fileSize;
-			load.put(cycleCount, load.get(cycleCount) + fileSize);
+			load.put(cycleCount, getLoad() + fileSize);
 		}
 		this.sentFiles.add(targetFile);
 		return true;
@@ -214,7 +234,7 @@ public class Node {
 			currQuery.requester.completedQueries.add(currQuery);
 //			initTransferPath(currQuery);
 //			initTransferPassive(currQuery);
-//			initTransferLALW(currQuery);
+			initTransferLALW(currQuery);
 			return true;
 		}
 		//transferFile(currQuery.requester, currQuery.requestedFile);
@@ -252,6 +272,18 @@ public class Node {
 	 * @param currQuery
 	 */
 	private void initTransferPassive(Query currQuery) {
+		//			Transfer newTransfer = new Transfer(currQuery, 30);
+		//			transferQueue.add(newTransfer);
+		//	
+		//			if (loadCheck()) {
+		//				newTransfer = transferQueue.remove();
+		//				sendTransfers.add(newTransfer);
+		//				newTransfer.query.requester.receiveTransfers.add(newTransfer);	
+		//				newTransfer.query.inProgress = true;
+		//				load += MAX_TRANSFER;
+		//				currQuery.requester.load += MAX_TRANSFER;
+		//			}
+
 		currQuery.nodesVisited.get(currQuery.nodesVisited.size()-1).transferFile(currQuery.requester, currQuery.requestedFile, true);
 	}
 
