@@ -46,7 +46,7 @@ public class Node {
 		//		maxTransferBandwidth = 100;
 		cycleCount = 0;
 	}
-	
+
 
 	public ArrayList<File> createFileList(int numFiles) {
 		BufferedReader in = null;
@@ -60,6 +60,7 @@ public class Node {
 			int fileSize = 0;
 			try {
 				fileSize = Integer.parseInt(in.readLine());
+//				System.out.println(fileSize);
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -80,20 +81,13 @@ public class Node {
 	}
 
 	public boolean transferFile(Node targetNode, File targetFile, boolean isRequestor) {
-		//		File requestedFile = getRandomFile();
-		//if (load + requestedFile.size < 100) {
-		//load += requestedFile.size;
-		//	neighbor.load += requestedFile.size;
-		//		if (load < MAX_LOAD && query.nodesVisited.get(query.nodesVisited.size() - 1).load < MAX_LOAD) {
-		//			query.sender = this;
-		//			query.sender.files.add(query.requestedFile);
-		//		}
+
 
 		File requestedCopy = new File(targetFile);		// Make new copy of target and set requests = 0
-//		if (targetFile.requests.containsKey(cycleCount))
-			targetFile.requests.put(cycleCount, targetFile.getRequests(cycleCount) + 1);
-//		else
-//			targetFile.requests.put(cycleCount, 1);
+		//		if (targetFile.requests.containsKey(cycleCount))
+		//					targetFile.requests.put(cycleCount, targetFile.getRequests(cycleCount) + 1);
+		//		else
+		//			targetFile.requests.put(cycleCount, 1);
 
 		if (isRequestor) {
 			targetNode.files.add(requestedCopy);
@@ -127,28 +121,7 @@ public class Node {
 
 
 	public void requestFile(Query currQuery){
-		//		currQuery.setSender(this);
-		//		LinkedList<Node> searchList = new LinkedList<Node>();
-		//		Node currNode;
-		//		Query searchQuery;
-		//
-		//		for(int i =0; i < neighbors.size(); i++){
-		//			searchList.add(neighbors.get(i));
-		//		}
-		//		
-		//		while (!searchList.isEmpty()) {
-		//			searchQuery = new Query (currQuery); // Copy the query
-		//			currNode = searchList.remove();	// Get the neighbor
-		//			if (currNode.receiveRequest(searchQuery)) {
-		//				return true;
-		//			}
-		//		}
-		//		for (Node neighbor : neighbors) {
-		//			searchQuery = new Query (currQuery);
-		//			searchQuery.nodesVisited.add(neighbor);
-		//			return neighbor.requestFile(searchQuery);
-		//		}
-		//		return false;
+
 		cycleCount++;
 		File queryFile = getFile(currQuery);
 		File queryReplica = getReplica(currQuery);
@@ -215,13 +188,10 @@ public class Node {
 		}
 		return null;
 	}
-	
+
 
 	public boolean receiveRequest(Query currQuery){
-		//		currQuery.hopCount++;
-		//		if (currQuery.hopCount <= Query.ttl) {
-		//			currQuery.nodesVisited.add(this);
-		//			if (!currQuery.inProgress){
+
 		File queryFile = getFile(currQuery);
 		File queryReplica = getReplica(currQuery);
 		if (queryFile != null || queryReplica != null ) {
@@ -229,84 +199,46 @@ public class Node {
 				//				files.add(currQuery.requestedFile);
 				replicas.remove(queryReplica);
 				replicas.add(queryReplica); //moving to top of list
+
+				queryReplica.requests.put(cycleCount, queryReplica.getRequests(cycleCount) + 1);
 			}
+			else
+				queryFile.requests.put(cycleCount, queryFile.getRequests(cycleCount) + 1);
 			currQuery.hopCount = currQuery.nodesVisited.size();
 			currQuery.requester.completedQueries.add(currQuery);
-//			initTransferPath(currQuery);
-//			initTransferPassive(currQuery);
-			initTransferLALW(currQuery);
+
+//									initTransferPassive(currQuery);
+									initTransferPath(currQuery);
+//			initTransferLALW(currQuery);
 			return true;
 		}
-		//transferFile(currQuery.requester, currQuery.requestedFile);
-		//					currQuery.inProgress = true;
-		//					initTransfer(currQuery);
-		//					if (replicas.contains(currQuery.requestedFile)){
-		//						files.add(currQuery.requestedFile);
-		//						replicas.remove(currQuery.requestedFile);
-		//					}
-		//					initTransferPath(currQuery);
-		//					currQuery.requester.completedQueries.add(currQuery);
-		//					return true;
-		//				} 
-		return false;
-		//				else {
-		//					Query forwardQuery = new Query(currQuery.requestedFile, currQuery.requester);
-		//					forwardQuery = currQuery;
-		//					requestFile(forwardQuery);
-		//				}
 
-		//			}
-		//		}
-		//		return false;
+		return false;
+
 	}
 
-	//	public void transferFile(Query currQuery){
-	//		
-	//		
-	//	}
-	//	private boolean loadCheck() {
-	//		return this.load + MAX_TRANSFER < MAX_LOAD;
-	//	}
+
 
 	/**
 	 * @param currQuery
 	 */
 	private void initTransferPassive(Query currQuery) {
-		//			Transfer newTransfer = new Transfer(currQuery, 30);
-		//			transferQueue.add(newTransfer);
-		//	
-		//			if (loadCheck()) {
-		//				newTransfer = transferQueue.remove();
-		//				sendTransfers.add(newTransfer);
-		//				newTransfer.query.requester.receiveTransfers.add(newTransfer);	
-		//				newTransfer.query.inProgress = true;
-		//				load += MAX_TRANSFER;
-		//				currQuery.requester.load += MAX_TRANSFER;
-		//			}
+
 
 		currQuery.nodesVisited.get(currQuery.nodesVisited.size()-1).transferFile(currQuery.requester, currQuery.requestedFile, true);
 	}
 
 	private void initTransferPath(Query currQuery){
-		//		for (int i = currQuery.nodesVisited.size()-1; i > -1;i--){
-		//			Transfer newTransfer = new Transfer(currQuery);
-		//			if (i  > 0){
-		//				newTransfer.sender = currQuery.nodesVisited.get(i);
-		//				newTransfer.receiver = currQuery.nodesVisited.get(i-1);
-		//			}
-		//
-		//			//			currQuery.nodesVisited.get(i).transferQueue.add(newTransfer);
-		//			newTransfer.sender.sentFiles.add(newTransfer);
-		//			newTransfer.receiver.receivedFiles.add(newTransfer);
-		//			
-		//		}
 
-		for (int i = currQuery.nodesVisited.size()-1; i >-1;i--) {	
-			if (i > 0)
-				currQuery.nodesVisited.get(i).transferFile(currQuery.nodesVisited.get(i-1), currQuery.requestedFile, false);
-			else
-				currQuery.nodesVisited.get(i).transferFile(currQuery.requester, currQuery.requestedFile, true);
-		}
+	
+
+			for (int i = currQuery.nodesVisited.size()-1; i >-1;i--) {	
+				if (i > 0)
+					currQuery.nodesVisited.get(i).transferFile(currQuery.nodesVisited.get(i-1), currQuery.requestedFile, false);
+				else
+					currQuery.nodesVisited.get(i).transferFile(currQuery.requester, currQuery.requestedFile, true);
+			}
+		
 	}
 
 	private void initTransferRandom(Query q) {
@@ -314,60 +246,78 @@ public class Node {
 	}
 
 	private void initTransferLALW(Query q) {
+
 		q.nodesVisited.get(q.nodesVisited.size()-1).transferFile(q.requester, q.requestedFile, true); // passive replication
 		File mostAccessed = files.get(0);
 		int totalFileWeight = 0;
+		int totalRequestedFiles = 0;
 		int fileWeight = 0;
 		for (File file : files) {
-			fileWeight = file.getFileWeight(cycleCount);
-			totalFileWeight += fileWeight;
-			if (mostAccessed.getFileWeight(cycleCount) < fileWeight) {
-				mostAccessed = file;
+			if (file.requests.containsKey(cycleCount)){
+				fileWeight = file.getFileWeight(cycleCount);
+				totalRequestedFiles++;
+				totalFileWeight += fileWeight;
+				if (mostAccessed.getFileWeight(cycleCount) < fileWeight) {
+					mostAccessed = file;
+				}
 			}
 		}
 		for (File file : replicas) {
-			fileWeight = file.getFileWeight(cycleCount);
-			totalFileWeight += fileWeight;
-			if (mostAccessed.getFileWeight(cycleCount) < fileWeight) {
-				mostAccessed = file;
+			if (file.requests.containsKey(cycleCount)){
+				fileWeight = file.getFileWeight(cycleCount);
+				totalRequestedFiles++;
+				totalFileWeight += fileWeight;
+				if (mostAccessed.getFileWeight(cycleCount) < fileWeight) {
+					mostAccessed = file;
+				}
 			}
 		}
+
 		double avgPopFileWeight = (double) mostAccessed.getFileWeight(cycleCount) / cycleCount;
-		double avgTotalWeight = (double) totalFileWeight / (cycleCount * (replicas.size() + files.size()));
+		//				double avgTotalWeight = (double)totalFileWeight / (cycleCount * (replicas.size() + files.size()));
+		double avgTotalWeight = (double)totalFileWeight/ (totalRequestedFiles *cycleCount);
 		double numReplicas = Math.floor(avgPopFileWeight / avgTotalWeight);
-//		System.out.println("Replicas: " + replicas);
-		ArrayList<Integer> neighborLoad = new ArrayList<Integer>();
-		for (Node neighbor : neighbors) {
-			if (neighbor.getLoad() != null) {
-//				System.out.println("Neighbor load: " + neighbor.getLoad());
-				neighborLoad.add((Integer) neighbor.getLoad());
-			}
-			else
-				neighborLoad.add(0);
-		}
+		//		System.out.println("Cycle Count: " + cycleCount + "\tAvgPopWeight " +avgPopFileWeight + "\tAvgTotalWeight: " + avgTotalWeight);
+		//		System.out.println("Replicas: " + replicas);
+
+		//				System.out.println("Cycle: "+cycleCount + "\tTotal Files Requested: " + totalRequestedFiles + "\tTotal Weight: " +totalFileWeight);
+
 		Collections.sort(neighbors, new Comparator<Node>() {
 			public int compare(Node n1, Node n2) {
-					return (int)n1.getLoad().compareTo(n2.getLoad());
+				return (int)n1.getLoad().compareTo(n2.getLoad());
 			}
 		}); 
+
 		int replicasNeeded = ((int)numReplicas > neighbors.size()) ? neighbors.size() : (int)numReplicas;
+
+		//		Collections.sort(q.nodesVisited, new Comparator<Node>() {
+		//		public int compare(Node n1, Node n2) {
+		//				return (int)n1.getLoad().compareTo(n2.getLoad());
+		//		}
+		//	}); 
+		//		int replicasNeeded = ((int)numReplicas > q.nodesVisited.size()) ? q.nodesVisited.size() : (int)numReplicas;
+
+		//		System.out.println("Cycle Count: " + cycleCount + "\tReplicas: " + replicasNeeded);
 		for (int i = 0; i <  replicasNeeded; i++) {
-			transferFile(neighbors.get(i), mostAccessed, false);
+			if (!neighbors.get(i).hasFile(mostAccessed))
+				transferFile(neighbors.get(i), mostAccessed, false);
 		}
 	}
-	
-//	public void sortNeighborLoad(){
-//		int currLoad = neighbors.get(0).getLoad(cycleCount);
-//		
-//		Collections.sort(neighbors, new Comparator<Node>(){
-//			public int compare(Node a, Node b){
-//				return a.getLoad(cycleCount) == b.getLoad(cycleCount);
-//			}
-//		});
-//			
-//		
-//	}
 
+
+	private boolean hasFile(File aFile){
+		for (File currFile : files){
+			if (currFile.id == aFile.id)
+				return true;
+		}
+
+		for (File currFile : replicas){
+			if (currFile.id == aFile.id)
+				return true;
+		}
+
+		return false;
+	}
 
 
 	private Integer getLoad() {
@@ -382,49 +332,10 @@ public class Node {
 	 * @param myQuery
 	 * @return true if transfer of a given file is already in progress on a node
 //	 */
-	//	public boolean transferInProgress (Query myQuery) {
-	//		UUID fileID = myQuery.requestedFile.id;
-	//		Node requestor = myQuery.requester;
-	//		//Node sender = myQuery.sender;
-	//
-	//		for (Transfer tran : sendTransfers) {
-	//			if (tran.transferedFile.id.equals(fileID) && 
-	//					tran.receiver.equals(requestor)) {
-	//				return true;
-	//			}
-	//		}
-	//		return false;
-	//	}
 
 
-	//	public ArrayList<Transfer> processTransfers(){
-	//		for (int j = 0; j < sendTransfers.size(); j++){
-	//			Transfer currTransfer = sendTransfers.get(j);
-	//			maxTransferBandwidth = MAX_LOAD / (sendTransfers.size() + receiveTransfers.size()); //TODO: change to float
-	//			int maxReceiveBandwidth = MAX_LOAD / (currTransfer.receiver.sendTransfers.size() + currTransfer.receiver.receiveTransfers.size());
-	//
-	//			int bandwidth = Math.min(maxReceiveBandwidth, maxTransferBandwidth);
-	//			if (currTransfer.cycleTransfer(bandwidth)) {
-	//				//System.out.println("removing: " + currTransfer.transferedFile.id);
-	//				sendTransfers.remove(currTransfer);
-	//				completed.add(currTransfer);
-	//				currTransfer.receiver.receiveTransfers.remove(currTransfer);
-	//				load = load - MAX_TRANSFER;
-	//				currTransfer.receiver.load = load - MAX_TRANSFER;
-	//			}
-	//		}
-	//		return completed;
-	//
-	//
-	//}
 
 
-	//	public Query getQuery(){
-	//		return currRequest;
-	//	}
-	//	public void clearQuery(){
-	//		currRequest = new Query();
-	//	}
 
 	public void addNeighbor(Node currNode){
 		neighbors.add(currNode);

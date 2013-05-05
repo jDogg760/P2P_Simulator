@@ -11,7 +11,7 @@ public class Network {
 	public ArrayList<File> fileList;
 	public ArrayList<Query> queryList;
 	
-	protected static final int requestsPerCycle = 5;
+	protected static final int requestsPerCycle = 30;
 
 	public Network(int numNodes, int numNeighbors) {
 		nodeCount = numNodes;

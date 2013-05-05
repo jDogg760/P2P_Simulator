@@ -20,7 +20,7 @@ public class FileGenerator {
 	 */
 	public static void main(String[] args) {
 		
-		int numFiles = 20;
+		int numFiles = 5;
 		ArrayList<File> files = new ArrayList<File>();
 		PrintWriter out = null;
 		try {

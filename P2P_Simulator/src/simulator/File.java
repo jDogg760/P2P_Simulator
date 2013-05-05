@@ -25,14 +25,14 @@ public class File {
 	}
 
 	public int getFileWeight(int cycleCount) {
-		if (requests.containsKey(cycleCount)) {
+//		if (requests.containsKey(cycleCount)) {
 			int weight = 0;
 			for(Integer key: requests.keySet()) {
 				weight += requests.get(key) * Math.pow(2, -(cycleCount - key));
 			}
 			return weight;
-		}
-		return 0;
+//		}
+//		return 0;
 	}
 	
 	public int getRequests(int cycleCount) {
