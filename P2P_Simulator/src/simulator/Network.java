@@ -23,20 +23,6 @@ public class Network {
 		initFileLists(neighborCount);
 	}
 	
-	public void simulate(Replicator repScheme, int cycleCount) {
-		for (int i = 0; i < cycleCount; i++) {
-			ArrayList<Node> requestingNodes = getRequestNodes();
-			File requestedFile;
-			for(Node currentNode : requestingNodes) {
-				requestedFile = getRandomFile();
-				Query currentQuery = new Query(requestedFile, currentNode);
-				queryList.add(currentQuery);
-				currentNode.requestFile(currentQuery);
-				
-			}
-		}
-	}
-	
 	/**
 	 * @return list of random nodes that will attempt file requests
 	 */
@@ -90,7 +76,6 @@ public class Network {
 		while (currNode.neighbors.size() < neighborCount - 2) {
 			Random generator = new Random();
 			currNeighbor = nodeList.get(generator.nextInt(nodeList.size()));
-//			System.out.println(currNeighbor.neighbors.size());
 			if (!currNode.neighbors.contains(currNeighbor) && 
 					currNode != currNeighbor && 
 					currNeighbor.neighbors.size() <= neighborCount) {

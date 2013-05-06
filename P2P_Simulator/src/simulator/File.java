@@ -5,12 +5,13 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.Vector;
 
+
+
 public class File {
 
 	public UUID id;
 	public int size;
 	public HashMap<Integer,Integer> requests;
-
 
 	public File(UUID id, int size) {
 		this.id = id;
@@ -18,23 +19,29 @@ public class File {
 		requests = new HashMap<Integer,Integer>();
 	}
 
-	public File(File f) {
-		id = f.id;
-		size = f.size;
+	/**
+	 * @param file - copy constructor for file
+	 */
+	public File(File file) {
+		id = file.id;
+		size = file.size;
 		requests = new HashMap<Integer,Integer>();
 	}
 
+	/**
+	 * @param cycleCount - get the access weight of a file
+	 */
 	public int getFileWeight(int cycleCount) {
-//		if (requests.containsKey(cycleCount)) {
 			int weight = 0;
 			for(Integer key: requests.keySet()) {
 				weight += requests.get(key) * Math.pow(2, -(cycleCount - key));
 			}
 			return weight;
-//		}
-//		return 0;
 	}
 	
+	/**
+	 * @param cycleCount - get the request rate of a file
+	 */
 	public int getRequests(int cycleCount) {
 		Integer numRequests = requests.get(cycleCount);
 		if (numRequests == null) {
